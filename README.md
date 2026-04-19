@@ -5,7 +5,7 @@
 
 <!-- Animated Typing SVG -->
 <a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Montserrat&weight=900&size=32&duration=2500&pause=1000&color=FFFFFF&center=true&vCenter=true&width=900&height=80&lines=ML+DriftSense:+ML+Model+Monitoring+%26+Drift+Detection+System" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Playfair+Display&weight=700&size=24&duration=4000&pause=999999&color=2C3E50&center=true&vCenter=true&width=900&height=60&lines=ML+DriftSense:+ML+Model+Monitoring+%26+Drift+Detection+System" alt="Typing SVG" />
 </a>
 
 <br/>
