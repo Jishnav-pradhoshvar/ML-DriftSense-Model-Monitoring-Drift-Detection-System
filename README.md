@@ -5,7 +5,7 @@
 
 <!-- Animated Typing SVG -->
 <a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Playfair+Display&weight=700&size=24&duration=4000&pause=999999&color=2C3E50&center=true&vCenter=true&width=900&height=60&lines=ML+DriftSense:+ML+Model+Monitoring+%26+Drift+Detection+System" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=22&duration=3000&pause=800&color=A78BFA&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=80&lines=🔍+Detect+Drift+Before+It+Hurts+Your+Model;🤖+Auto-Retrain+When+Performance+Drops;📊+Real-Time+Monitoring+Dashboard" alt="Typing SVG" />
 </a>
 
 <br/>
@@ -90,34 +90,57 @@ A real-time visual interface showing model health, drift reports, and monitoring
 ## 🏗️ System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        ML DRIFTSENSE                            │
-│                                                                 │
-│   📂 Training Data                                              │
-│         │                                                       │
-│         ▼                                                       │
-│   🤖 Model Training (RandomForest)  ──────► 📊 MLflow Tracking │
-│         │                                                       │
-│         ▼                                                       │
-│   📥 New Incoming Data                                          │
-│         │                                                       │
-│         ▼                                                       │
-│   🔍 Drift Detection (Evidently AI)                             │
-│         │                                                       │
-│    ┌────┴─────────────────────┐                                 │
-│    │ Drift Detected?          │                                 │
-│    │                          │                                 │
-│   YES                         NO                                │
-│    │                          │                                 │
-│    ▼                          ▼                                 │
-│ 🔄 Auto Retrain          ✅ Continue Monitoring                 │
-│    │                                                            │
-│    ▼                                                            │
-│ 💾 New Model Saved + Logged to MLflow                           │
-│    │                                                            │
-│    ▼                                                            │
-│ 📺 Streamlit Dashboard Updates                                  │
-└─────────────────────────────────────────────────────────────────┘
+                         ╔══════════════════════════════════════╗
+                         ║          ML  D R I F T S E N S E     ║
+                         ╚══════════════════════════════════════╝
+
+  ┌─────────────────┐        train.py          ┌──────────────────────┐
+  │  reference.csv  │ ──────────────────────►  │   RandomForest       │
+  │  (baseline)     │                          │   Model Training     │
+  └─────────────────┘                          └──────────┬───────────┘
+                                                          │
+                                          ┌───────────────▼───────────────┐
+                                          │       MLflow Experiment        │
+                                          │   accuracy · params · version  │
+                                          └───────────────────────────────┘
+
+  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─  production loop  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
+
+  ┌─────────────────┐        drift.py
+  │  current.csv    │ ──────────────────────►  ┌──────────────────────┐
+  │  (production)   │                          │   Evidently AI       │
+  └─────────────────┘                          │   Drift Detection    │
+  ┌─────────────────┐                          │                      │
+  │  reference.csv  │ ──────────────────────►  │  statistical tests   │
+  │  (baseline)     │                          │  on ALL columns      │
+  └─────────────────┘                          └──────────┬───────────┘
+                                                          │
+                              ┌───────────────────────────┴────────────────────────────┐
+                              │                                                         │
+                     DRIFT DETECTED                                              NO DRIFT
+                              │                                                         │
+                              ▼                                                         ▼
+               ┌──────────────────────────┐                             ┌───────────────────────────┐
+               │       retrain.py         │                             │     Model stays active     │
+               │                          │                             │     No action required     │
+               │  1. Archive reference    │                             └───────────────────────────┘
+               │     → data/history/      │
+               │       reference_vN.csv   │
+               │                          │
+               │  2. Train on current.csv │
+               │                          │
+               │  3. Promote current.csv  │
+               │     → new reference.csv  │
+               │                          │
+               │  4. Log to MLflow        │
+               └──────────┬───────────────┘
+                          │
+                          ▼
+          ┌───────────────────────────────┐
+          │       Streamlit Dashboard      │
+          │  drift status · model health  │
+          │  accuracy trends · run logs   │
+          └───────────────────────────────┘
 ```
 
 ---
@@ -141,8 +164,12 @@ A real-time visual interface showing model health, drift reports, and monitoring
 ml_driftSense/
 │
 ├── 📂 data/
-│   ├── reference.csv          # Baseline training data
-│   └── current.csv            # Incoming production data
+│   ├── reference.csv          # Baseline training data (always the latest)
+│   ├── current.csv            # Incoming production data
+│   └── 📂 history/            # Auto-created. Versioned reference snapshots
+│       ├── reference_v1.csv   # Baseline before 1st retrain
+│       ├── reference_v2.csv   # Baseline before 2nd retrain
+│       └── ...                # Grows automatically with each retrain cycle
 │
 ├── 📂 models/
 │   └── model.pkl              # Trained model artifact
@@ -245,6 +272,73 @@ drift_share = 0.1   # 10% of columns must show drift to trigger alert
 | Distribution genuinely shifts | ✅ Drift detected → Auto-retrain triggered |
 
 > 💡 **Key Insight:** Drift is about *how data is distributed*, not individual values.
+
+---
+
+## 🔄 Dynamic Drift Checking & Versioned Reference History
+
+One of the core production design decisions in DriftSense is that **no data path or column name is ever hardcoded**. The system is built to handle real-world scenarios where *anything* in the data can change — not just a specific column.
+
+### Why `--current` exists
+
+`drift.py` accepts a `--current` flag so you can point drift detection at **any dataset** at any time — without touching the code:
+
+```bash
+# Check drift against incoming production data
+python src/drift.py --current data/current.csv
+
+# Check drift against a historical snapshot
+python src/drift.py --current data/history/reference_v1.csv
+
+# Check drift against any external dataset
+python src/drift.py --current data/new_batch_october.csv
+```
+
+This matters in production because the data you want to compare against changes depending on the question you're asking. Hardcoding a path would make the system brittle and non-reusable.
+
+### How versioned reference history works
+
+Every time `retrain.py` runs, **before overwriting `reference.csv`**, it automatically archives the current baseline into a versioned snapshot under `data/history/`:
+
+```
+Retrain cycle 1  →  data/history/reference_v1.csv   (original baseline)
+Retrain cycle 2  →  data/history/reference_v2.csv   (post-cycle-1 baseline)
+Retrain cycle 3  →  data/history/reference_v3.csv   (post-cycle-2 baseline)
+...
+```
+
+`data/reference.csv` always holds the **latest** baseline — the distribution the current model was trained on. The history folder holds every previous baseline, so no snapshot is ever lost.
+
+After each retrain, the terminal prints all available snapshots automatically:
+
+```
+📦 Old reference archived → data/history/reference_v1.csv
+
+📂 Available historical references for drift checks:
+   python src/drift.py --current data/history/reference_v1.csv
+   python src/drift.py --current data/history/reference_v2.csv
+
+   python src/drift.py --current data/current.csv  # → should show NO drift now
+```
+
+### A complete multi-cycle example
+
+```bash
+# Cycle 1 — Initial training on reference data (distribution A)
+python src/train.py
+
+# Cycle 1 — Production data has drifted (distribution B)
+# Drift detected → retrain triggered → reference_v1.csv archived → reference.csv = B
+python src/drift.py --current data/current.csv
+
+# Cycle 2 — Verify: same current data should now show NO drift
+python src/drift.py --current data/current.csv          # ✅ No drift
+
+# Cycle 2 — Check against original baseline: drift should be detected again
+python src/drift.py --current data/history/reference_v1.csv   # ⚠️ Drift detected → retrain
+```
+
+> 💡 **Design Principle:** `reference.csv` is not a static file — it is a living record of what the model currently knows. Every retrain moves the baseline forward, and history ensures you can always look back.
 
 ---
 
