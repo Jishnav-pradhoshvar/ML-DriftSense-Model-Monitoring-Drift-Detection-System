@@ -1,8 +1,5 @@
 <div align="center">
 
-<!-- Animated Header Banner -->
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f0c29,50:302b63,100:24243e&height=200&section=header&text=ML%20DriftSense&fontSize=72&fontColor=ffffff&fontAlignY=38&desc=ML%20Model%20Monitoring%20%26%20Drift%20Detection%20System&descAlignY=60&descSize=20&animation=fadeIn" width="100%"/>
-
 <!-- Animated Typing SVG -->
 <a href="https://git.io/typing-svg">
   <img 
