@@ -5,7 +5,7 @@
 
 <!-- Animated Typing SVG -->
 <a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=22&duration=3000&pause=800&color=A78BFA&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=80&lines=🔍+Detect+Drift+Before+It+Hurts+Your+Model;🤖+Auto-Retrain+When+Performance+Drops;📊+Real-Time+Monitoring+Dashboard" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=22&duration=3000&pause=800&color=A78BFA&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=80&lines=🔍+Detect+Drift+Before+It+Hurts+Your+Model;🤖+Auto-Retrain+When+Performance+Drops;📊+Real-Time+Monitoring+Dashboard" alt="Typing SVG" />
 </a>
 
 <br/>
