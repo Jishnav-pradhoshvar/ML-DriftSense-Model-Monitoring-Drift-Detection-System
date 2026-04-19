@@ -397,30 +397,7 @@ The Streamlit dashboard shows:
 
 ---
 
-## 🔮 Roadmap
-
-- [ ] Real-time data pipeline integration
-- [ ] Email / Slack alert system when drift is detected
-- [ ] Cloud deployment (AWS SageMaker / GCP Vertex AI)
-- [ ] Prediction monitoring (output drift)
-- [ ] Multi-model support
-- [ ] REST API for drift status checks
-
----
-
-## 💬 Interview-Ready Explanation
-
-> *"I built an end-to-end ML monitoring system that tracks model performance using MLflow, detects data drift using Evidently AI, and automatically retrains the model when drift exceeds a defined threshold. The system includes a Streamlit dashboard for real-time monitoring and ensures continuous model reliability in production."*
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🤝 Contributing
+## 🤝Contributions are welcome!
 
 Contributions, issues, and feature requests are welcome!
 
@@ -436,8 +413,6 @@ Contributions, issues, and feature requests are welcome!
 
 <!-- Animated Footer -->
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:24243e,50:302b63,100:0f0c29&height=120&section=footer&animation=fadeIn" width="100%"/>
-
-**Built with 🧠 and ☕ | ML DriftSense — Because models shouldn't go blind in production.**
 
 ⭐ **Star this repo if you find it useful!**
 
