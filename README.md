@@ -5,7 +5,7 @@
 
 <!-- Animated Typing SVG -->
 <a href="https://git.io/typing-svg">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=700&size=22&duration=3000&pause=800&color=A78BFA&center=true&vCenter=true&multiline=true&repeat=true&width=700&height=80&lines=🔍+Detect+Drift+Before+It+Hurts+Your+Model;🤖+Auto-Retrain+When+Performance+Drops;📊+Real-Time+Monitoring+Dashboard" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Montserrat&weight=900&size=32&duration=2500&pause=1000&color=FFFFFF&center=true&vCenter=true&width=900&height=80&lines=ML+DriftSense:+ML+Model+Monitoring+%26+Drift+Detection+System" alt="Typing SVG" />
 </a>
 
 <br/>
